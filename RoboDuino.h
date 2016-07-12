@@ -19,15 +19,14 @@ class RoboDuino
     void doSerialEvent(char inputChar);
     //Loop Event Handler
     void doLoopEvent();
-    //Internal setup function
-    void init(String partList[][3], char pinList[][3]);
+    String getName(int pos1, int pos2);
+    void init(String partList[NUM_PARTS][3], String pinList[NUM_PARTS]);
   private:
-    String _partList[][3];
-    char _pinList[][3];
-    Servo _servos[];
+    String _partList[NUM_PARTS][3];
+    String _pinList[NUM_PARTS];
+    Servo _servos[NUM_SERVOS];
     //Motor _motors[];
     String _inputCommand;
     void _doCommand();
-    void _setup();
 };
 #endif
