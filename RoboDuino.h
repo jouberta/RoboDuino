@@ -20,9 +20,9 @@ class RoboDuino
     //Loop Event Handler
     void doLoopEvent();
     String getName(int pos1, int pos2);
-    void init(String partList[NUM_PARTS][3], String pinList[NUM_PARTS]);
+    void init(String partList[NUM_PARTS][PART_PROPERTY_COUNT], String pinList[NUM_PARTS]);
   private:
-    String _partList[NUM_PARTS][3];
+    String _partList[NUM_PARTS][PART_PROPERTY_COUNT];
     String _pinList[NUM_PARTS];
     Servo _servos[NUM_SERVOS];
     //Motor _motors[];
