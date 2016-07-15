@@ -24,9 +24,11 @@ class RoboDuino
   private:
     String _partList[NUM_PARTS][PART_PROPERTY_COUNT];
     String _pinList[NUM_PARTS];
+    String _inputCommand;
+    int _partListToTypeRelation[NUM_PARTS];
+    int _servoCounter;
     Servo _servos[NUM_SERVOS];
     //Motor _motors[];
-    String _inputCommand;
     void _doCommand();
 };
 #endif
