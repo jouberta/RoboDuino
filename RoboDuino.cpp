@@ -36,7 +36,7 @@ void RoboDuino::init(String partList[][PART_PROPERTY_COUNT], String pinList[])
     //Make the interface
     if (_partList[i][PART_TYPE] == "servo") 
     {
-      _servos[i].attach(_pinList[i].toInt());
+      _servos[_servoCounter].attach(_pinList[i].toInt());
       _partListToTypeRelation[i] = _servoCounter;
       _servoCounter++;
     } 

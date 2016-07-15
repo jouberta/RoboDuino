@@ -12,10 +12,10 @@ void setup() {
    *       will need to move it to a different array of type
    *       int to save ram
    */
-  partList[0][PART_NAME] = "A Name";
-  partList[0][PART_TYPE] = "servo";
-  partList[0][PART_DESCRIPTION] = "A description of a servo";
-  partList[0][COMMAND_IDENTIFIER] = "S";
+  partList[2][PART_NAME] = "A Name";
+  partList[2][PART_TYPE] = "servo";
+  partList[2][PART_DESCRIPTION] = "A description of a servo";
+  partList[2][COMMAND_IDENTIFIER] = "S";
   
   
   partList[1][PART_NAME] = "The second";
@@ -23,15 +23,15 @@ void setup() {
   partList[1][PART_DESCRIPTION] = "Not another description yes of a servo";
   partList[1][COMMAND_IDENTIFIER] = "N";
   
-  partList[2][PART_NAME] = "THe 1 and 0s";
-  partList[2][PART_TYPE] = "digital_output";
-  partList[2][PART_DESCRIPTION] = "Yay or nay";
-  partList[2][COMMAND_IDENTIFIER] = "D";
+  partList[0][PART_NAME] = "THe 1 and 0s";
+  partList[0][PART_TYPE] = "digital_output";
+  partList[0][PART_DESCRIPTION] = "Yay or nay";
+  partList[0][COMMAND_IDENTIFIER] = "D";
   
   
-  pinList[0] = "9"; //CHANGE ME!
+  pinList[2] = "9"; //CHANGE ME!
   pinList[1] = "10"; //CHANGE ME!
-  pinList[2] = "A1"; //CHANGE ME!
+  pinList[0] = "A1"; //CHANGE ME!
 
   robo.init(partList, pinList);
   
