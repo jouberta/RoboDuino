@@ -1,28 +1,31 @@
+
 #include "RoboDuino.h"
+#include <MemoryFree.h>
+
 RoboDuino robo;
 
 void setup() {
   //Init serial connection
   Serial.begin(9600);
-
   // Configure Part List details
   struct PartList partList[NUM_PARTS] = {
-    {"Light",TYPE_DOUT,"A light output on or off","T",A1},
-    {"Right Servo", TYPE_SERVO, "A description of a servo", "R", 9},
-    {"Left Servo", TYPE_SERVO, "A description of a servo", "L", 10}
+    {TYPE_BUTTON,"S",A0},
+    {TYPE_BUTTON,"W",A3},
+    {TYPE_BUTTON,"A",A2},
+    {TYPE_BUTTON,"D",A1},
+    {TYPE_SERVO, "R", 10},
+    {TYPE_SERVO, "L", 9}
   };
-  robo.init(partList);
-  
+  robo.init(partList);  
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  delay(50);
+  
+  robo.doLoopEvent();
 }
 
 void serialEvent() {
-  // reads bytes from serial until a newline is detected
-  // serial_received then become true so the main program knows there is a command to process
   while (Serial.available()) {
     // get the new byte:
     char readChar = (char)Serial.read();

@@ -12,9 +12,7 @@
 
 struct PartList
 {
-  char Name[29];
   int Type;
-  String Description;
   String CommandIdentifier;
   int PinNumber;
 };

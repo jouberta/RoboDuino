@@ -5,6 +5,7 @@
 */
 
 #include <Arduino.h>
+#include <MemoryFree.h>
 #include "RoboDuino.h"
 
 
@@ -45,6 +46,11 @@ void RoboDuino::init(PartList partList[NUM_PARTS])
     {
       //interfaceInstances[i] = new Servo();
       //_motors[i].attach(_pinList[i][PIN_SERVO]); 
+    } 
+    else if (_partList[i].Type == TYPE_BUTTON) 
+    {
+      pinMode(_partList[i].PinNumber, INPUT_PULLUP);
+      _partListToTypeRelation[i] = i;
     }
   }
 }
@@ -70,8 +76,8 @@ void RoboDuino::_doCommand()
   int valueLength = _inputCommand.length() - (2 + seperatorPosition);
   
   String cmdID = _inputCommand.substring(0, seperatorPosition); // read the first letter of the command, this indicates the command type - M/motor S/servo X/switch Q/query
-  String commandValue = _inputCommand.substring(seperatorPosition + 1, _inputCommand.length());
-
+  String commandValue = _inputCommand.substring(seperatorPosition + 1, seperatorPosition + valueLength + 1);
+  
   for(int i = 0; i < NUM_PARTS; i++)
   {
     if (_partList[i].CommandIdentifier == cmdID)
@@ -91,6 +97,13 @@ void RoboDuino::_doCommand()
           int partNumber = _partListToTypeRelation[i];
           analogWrite(_partList[partNumber].PinNumber, commandValue.toInt());
       }
+      else if (_partList[i].Type == TYPE_BUTTON)
+      {
+          int partNumber = _partListToTypeRelation[i];
+          pinMode(_partList[partNumber].PinNumber, INPUT_PULLUP); 
+          //Serial.print("Button Value: ");
+          //Serial.print(digitalRead(_partList[partNumber].PinNumber));
+      }
     }
   }
   
@@ -99,5 +112,28 @@ void RoboDuino::_doCommand()
 //Loop Event Handler
 void RoboDuino::doLoopEvent()
 {
-  
+  for(int i = 0; i < NUM_PARTS; i++)
+  {
+    if (_partList[i].Type == TYPE_BUTTON)
+    {
+      if (digitalRead(_partList[i].PinNumber) == LOW) {
+        if (_partList[i].PinNumber == A1) 
+        {
+          _servos[0].write(_servos[0].read() + 1);
+        }
+        if (_partList[i].PinNumber == A2) 
+        {
+          _servos[0].write(_servos[0].read() - 1);
+        }
+        if (_partList[i].PinNumber == A3) 
+        {
+          _servos[1].write(_servos[1].read() + 1);
+        }
+        if (_partList[i].PinNumber == A0) 
+        {
+          _servos[1].write(_servos[1].read() - 1);
+        }
+      }
+    }
+  }
 }

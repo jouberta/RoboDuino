@@ -1,5 +1,5 @@
 //The idea is WE HAVE THESE CONSTANTS to help define a list of PARTs in the program
-#define NUM_PARTS 3
+#define NUM_PARTS 6
 #define NUM_SERVOS 2
 
 // The constanst for names of properties of PART
@@ -23,4 +23,5 @@
 #define TYPE_AOUT 1
 #define TYPE_DOUT 2
 #define TYPE_MOTOR 3
+#define TYPE_BUTTON 4
 
