@@ -7,6 +7,7 @@
 #define PART_TYPE 1
 #define PART_DESCRIPTION 2
 #define COMMAND_IDENTIFIER 3
+#define PART_PIN 4
 
 // The constansts for pin configs
 #define PIN_MOTOR_DIRECTION_1 1
@@ -17,5 +18,9 @@
 
 #define NUM_PART_TYPES 2
 
-#define PART_PROPERTY_COUNT 4
+// The constants for type of parts
+#define TYPE_SERVO 0
+#define TYPE_AOUT 1
+#define TYPE_DOUT 2
+#define TYPE_MOTOR 3
 

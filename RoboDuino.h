@@ -10,6 +10,15 @@
 #include "constants.h"
 #include <Servo.h>
 
+struct PartList
+{
+  char Name[29];
+  int Type;
+  String Description;
+  String CommandIdentifier;
+  int PinNumber;
+};
+
 class RoboDuino
 {
   public:
@@ -19,11 +28,9 @@ class RoboDuino
     void doSerialEvent(char inputChar);
     //Loop Event Handler
     void doLoopEvent();
-    String getName(int pos1, int pos2);
-    void init(String partList[NUM_PARTS][PART_PROPERTY_COUNT], String pinList[NUM_PARTS]);
+    void init(PartList partList[NUM_PARTS]);
   private:
-    String _partList[NUM_PARTS][PART_PROPERTY_COUNT];
-    String _pinList[NUM_PARTS];
+    PartList _partList[NUM_PARTS];
     String _inputCommand;
     int _partListToTypeRelation[NUM_PARTS];
     int _servoCounter;
