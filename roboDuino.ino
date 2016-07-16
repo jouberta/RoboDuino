@@ -1,6 +1,5 @@
 
 #include "RoboDuino.h"
-#include <MemoryFree.h>
 
 RoboDuino robo;
 
@@ -8,15 +7,19 @@ void setup() {
   //Init serial connection
   Serial.begin(9600);
   // Configure Part List details
-  struct PartList partList[NUM_PARTS] = {
-    {TYPE_BUTTON,"S",A0},
-    {TYPE_BUTTON,"W",A3},
-    {TYPE_BUTTON,"A",A2},
-    {TYPE_BUTTON,"D",A1},
-    {TYPE_SERVO, "R", 10},
-    {TYPE_SERVO, "L", 9}
+  struct Output outputList[NUM_OUTPUTS] = {
+    {TYPE_SERVO, "R", 10, 90},
+    {TYPE_SERVO, "L", 9, 90}
   };
-  robo.init(partList);  
+
+  struct Input inputList[NUM_INPUTS] = {
+    {TYPE_BUTTON_INC,"S",A0, 1},
+    {TYPE_BUTTON_DEC,"W",A3, 1},
+    {TYPE_BUTTON_INC,"A",A2, 0},
+    {TYPE_BUTTON_DEC,"D",A1, 0}
+  };
+  
+  robo.init(inputList, outputList);  
 }
 
 void loop() {

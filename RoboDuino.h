@@ -8,13 +8,23 @@
 
 #include <Arduino.h>
 #include "constants.h"
+#include "UserConst.h"
 #include <Servo.h>
 
-struct PartList
+struct Output
 {
   int Type;
   String CommandIdentifier;
   int PinNumber;
+  int Value;
+};
+
+struct Input
+{
+  int Type;
+  String CommandIdentifier;
+  int PinNumber;
+  int OutputNumber;
 };
 
 class RoboDuino
@@ -26,11 +36,12 @@ class RoboDuino
     void doSerialEvent(char inputChar);
     //Loop Event Handler
     void doLoopEvent();
-    void init(PartList partList[NUM_PARTS]);
+    void init(Input inputList[NUM_INPUTS], Output outputList[NUM_OUTPUTS]);
   private:
-    PartList _partList[NUM_PARTS];
+    Output _outputList[NUM_OUTPUTS];
+    Input _inputList[NUM_INPUTS];
     String _inputCommand;
-    int _partListToTypeRelation[NUM_PARTS];
+    int _partListToTypeRelation[NUM_OUTPUTS];
     int _servoCounter;
     Servo _servos[NUM_SERVOS];
     //Motor _motors[];
