@@ -15,8 +15,9 @@ struct Output
 {
   int Type;
   String CommandIdentifier;
-  int PinNumber;
+  int PinNumber[NUM_OUTPUT_PINS];
   int Value;
+  bool ValueChange;
 };
 
 struct Input
@@ -46,5 +47,6 @@ class RoboDuino
     Servo _servos[NUM_SERVOS];
     //Motor _motors[];
     void _doCommand();
+    void _driveMotorForward(int );
 };
 #endif

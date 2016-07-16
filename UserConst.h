@@ -6,6 +6,7 @@
  * 
  */
 #define NUM_INPUTS 4
-#define NUM_OUTPUTS 2
+#define NUM_OUTPUTS 3
 #define NUM_SERVOS 2
 #define SERVO_DELAY 10
+#define SERVO_DELAY 40
