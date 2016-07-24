@@ -8,5 +8,6 @@
 #define NUM_INPUTS 4
 #define NUM_OUTPUTS 3
 #define NUM_SERVOS 2
-#define SERVO_DELAY 10
-#define SERVO_DELAY 40
+#define SERVO_DELAY 25
+#define MOTOR_DELAY 100
+#define INPUT_DELAY 100

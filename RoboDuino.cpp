@@ -106,10 +106,9 @@ void RoboDuino::_doCommand()
           analogWrite(_outputList[partNumber].PinNumber[PIN_AOUT], commandValue.toInt());
       }
       else if(_outputList[i].Type == TYPE_MOTOR)
-      {
-          int partNumber = _partListToTypeRelation[i];
-          _outputList[partNumber].Value = commandValue.toInt();
-          _outputList[partNumber].ValueChange = true;
+      { 
+          _outputList[i].Value = commandValue.toInt();
+          _outputList[i].ValueChange = true;
       }
     }
   }
@@ -119,20 +118,29 @@ void RoboDuino::_doCommand()
 //Loop Event Handler
 void RoboDuino::doLoopEvent()
 {
+  unsigned int now = millis();
   for(int i = 0; i < NUM_INPUTS; i++)
   {
     if ( _inputList[i].Type == TYPE_BUTTON_INC || _inputList[i].Type == TYPE_BUTTON_DEC)
     {
       if (digitalRead(_inputList[i].PinNumber) == LOW) {
-        if (_inputList[i].Type == TYPE_BUTTON_INC) 
-        {
-          _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value + 1;
-          _outputList[_inputList[i].OutputNumber].ValueChange = true;
-        }
-        if (_inputList[i].Type == TYPE_BUTTON_DEC) 
-        {
-          _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value - 1;    
-          _outputList[_inputList[i].OutputNumber].ValueChange = true;        
+        if (now >= _lastRead[i] + INPUT_DELAY || now <= _lastRead[i] - INPUT_DELAY - 5)
+        {          
+          if (_inputList[i].Type == TYPE_BUTTON_INC) 
+          {
+            if (_outputList[_inputList[i].OutputNumber].Value <= 180) {
+              _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value + 1;
+              _outputList[_inputList[i].OutputNumber].ValueChange = true;
+            }
+          }
+          if (_inputList[i].Type == TYPE_BUTTON_DEC) 
+          {
+            if (_outputList[_inputList[i].OutputNumber].Value >= 0) {
+              _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value - 1;    
+              _outputList[_inputList[i].OutputNumber].ValueChange = true;        
+            }
+          }
+          _lastRead[i] = now;
         }
       }
     }
@@ -143,45 +151,49 @@ void RoboDuino::doLoopEvent()
     {
         int servoNumber = _partListToTypeRelation[i];
         int currentValue = _servos[servoNumber].read();
-        if (currentValue < _outputList[i].Value) 
+        if (now >= _lastRun[i] + SERVO_DELAY || now <= _lastRead[i] - SERVO_DELAY - 5) 
         {
-          _servos[servoNumber].write(currentValue + 1);
-          delay(SERVO_DELAY);
-        } 
-        else if (currentValue > _outputList[i].Value) 
-        {
-          _servos[servoNumber].write(currentValue - 1);    
-          delay(SERVO_DELAY);
+          _lastRun[i] = now;
+          if (currentValue < _outputList[i].Value) 
+          {
+            _servos[servoNumber].write(currentValue + 1);
+          } 
+          else if (currentValue > _outputList[i].Value) 
+          {
+            _servos[servoNumber].write(currentValue - 1);
+          }          
         }
     }
     
     if (_outputList[i].Type == TYPE_MOTOR)
     {
-      int currentMotorValue = analogRead(_outputList[i].PinNumber[PIN_MOTOR_PWM]);
       if (_outputList[i].ValueChange == true)
       {
         _outputList[i].ValueChange = false;
-        if (_outputList[i].Value < 0) 
-        {
-          //SET PINS TO REVERSE AND SET PWM VALUE
-          analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], (_outputList[i].Value * -1));
-          delay(SERVO_DELAY);
-          digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S1], HIGH);
-          digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S2], LOW);
-            
-        } 
-        else if (_outputList[i].Value > 0) 
-        {
-          analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], _outputList[i].Value);
-          delay(100);
-          //SET PINS TO foward AND SET PWM VALUE
-          digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S1], LOW);
-          digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S2], HIGH);
-        }  
-        else if (_outputList[i].Value == 0) 
-        {
-          analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], LOW);          
-        } 
+        if (now >= _lastRun[i] + MOTOR_DELAY || now <= _lastRead[i] - MOTOR_DELAY - 5) 
+        {          
+          _lastRun[i] = now;
+          
+          if (_outputList[i].Value < 0) 
+          {
+            //SET PINS TO REVERSE AND SET PWM VALUE
+            analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], (_outputList[i].Value * -1));
+            digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S1], HIGH);
+            digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S2], LOW);
+              
+          } 
+          else if (_outputList[i].Value > 0) 
+          {
+            analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], _outputList[i].Value);
+            //SET PINS TO foward AND SET PWM VALUE
+            digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S1], LOW);
+            digitalWrite(_outputList[i].PinNumber[PIN_MOTOR_S2], HIGH);
+          }  
+          else if (_outputList[i].Value == 0) 
+          {
+            analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], LOW);          
+          }         
+        }
       }
     }
   }

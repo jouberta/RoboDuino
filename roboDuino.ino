@@ -14,8 +14,8 @@ void setup() {
   };
 
   struct Input inputList[NUM_INPUTS] = {
-    {TYPE_BUTTON_INC,"S",A0, 2},
-    {TYPE_BUTTON_DEC,"W",A3, 2},
+    {TYPE_BUTTON_INC,"S",A0, 1},
+    {TYPE_BUTTON_DEC,"W",A3, 1},
     {TYPE_BUTTON_INC,"A",A2, 0},
     {TYPE_BUTTON_DEC,"D",A1, 0}
   };

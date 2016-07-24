@@ -45,7 +45,8 @@ class RoboDuino
     int _partListToTypeRelation[NUM_OUTPUTS];
     int _servoCounter;
     Servo _servos[NUM_SERVOS];
-    //Motor _motors[];
+    unsigned int _lastRun[NUM_OUTPUTS];
+    double _lastRead[NUM_INPUTS];
     void _doCommand();
     void _driveMotorForward(int );
 };
