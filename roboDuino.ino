@@ -12,20 +12,18 @@ void setup() {
     {TYPE_SERVO, "L", {9, -1, -1}, 90, false},
     {TYPE_MOTOR, "M", {2, 4, 3}, 0, false}
   };
-
   struct Input inputList[NUM_INPUTS] = {
     {TYPE_BUTTON_INC,"S",A0, 1},
     {TYPE_BUTTON_DEC,"W",A3, 1},
     {TYPE_BUTTON_INC,"A",A2, 0},
     {TYPE_BUTTON_DEC,"D",A1, 0}
   };
-  
+  // Initialise everything!
   robo.init(inputList, outputList);  
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  
+  // Do our loop event  
   robo.doLoopEvent();
 }
 
@@ -33,6 +31,7 @@ void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
     char readChar = (char)Serial.read();
+    // Do our serial event
     robo.doSerialEvent(readChar);
   }
 }

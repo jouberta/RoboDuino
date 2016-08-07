@@ -37,17 +37,25 @@ class RoboDuino
     void doSerialEvent(char inputChar);
     //Loop Event Handler
     void doLoopEvent();
+    // Initialising function
     void init(Input inputList[NUM_INPUTS], Output outputList[NUM_OUTPUTS]);
   private:
+    // Array of outputs
     Output _outputList[NUM_OUTPUTS];
+    // Array of servos
+    Servo _servos[NUM_SERVOS];
+    // Array of last run timings
+    unsigned int _lastRun[NUM_OUTPUTS];
+    // Array of inputs
     Input _inputList[NUM_INPUTS];
+    // Array of last read timings
+    unsigned int _lastRead[NUM_INPUTS];
+    // Command string buffer
     String _inputCommand;
+    // Part list relation
     int _partListToTypeRelation[NUM_OUTPUTS];
     int _servoCounter;
-    Servo _servos[NUM_SERVOS];
-    unsigned int _lastRun[NUM_OUTPUTS];
-    double _lastRead[NUM_INPUTS];
+    // Command processing method
     void _doCommand();
-    void _driveMotorForward(int );
 };
 #endif
