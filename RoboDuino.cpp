@@ -136,62 +136,59 @@ void RoboDuino::_doCommand()
   // If the command id is ? then do queries!
   if (cmdID == "?")
   {
-    if (commandValue) 
+    // Loop through outputs and send the details
+    for(int i = 0; i < NUM_OUTPUTS; i++)
     {
-      // Loop through outputs and send the details
-      for(int i = 0; i < NUM_OUTPUTS; i++)
-      {
-        // If we are quering all or just this output
-        if (commandValue == "" || _outputList[i].CommandIdentifier == commandValue) {
-          if(_outputList[i].Type == TYPE_SERVO)
-          {
-            Serial.print("SERVO,");          
-          }
-          else if(_outputList[i].Type == TYPE_DOUT)
-          {
-            Serial.print("DIGITAL_OUT,");     
-          }
-          else if(_outputList[i].Type == TYPE_AOUT)
-          {
-            Serial.print("ANALOGUE_OUT,");     
-          }
-          else if(_outputList[i].Type == TYPE_MOTOR)
-          {
-            Serial.print("MOTOR,");     
-          }
-          // Output identifier
-          Serial.print(_outputList[i].CommandIdentifier);
-          Serial.print(",");
-          // Output Value
-          Serial.print(_outputList[i].Value);
-          Serial.println();
+      // If we are quering all or just this output
+      if (commandValue == "" || _outputList[i].CommandIdentifier == commandValue) {
+        if(_outputList[i].Type == TYPE_SERVO)
+        {
+          Serial.print("SERVO,");          
         }
-      }
-      // Loop through inputs and send the details
-      for(int i = 0; i < NUM_INPUTS; i++)
-      {
-        // If we are quering all or just this input
-        if (commandValue == "" || _inputList[i].CommandIdentifier == commandValue) {
-          // Output type
-          if(_inputList[i].Type == TYPE_BUTTON_INC)
-          {
-            Serial.print("INCREMENT,");          
-          }
-          else if(_inputList[i].Type == TYPE_BUTTON_DEC)
-          {
-            Serial.print("OUTPUT,");     
-          }
-          else if(_inputList[i].Type == TYPE_BUTTON)
-          {
-            Serial.print("STANDARD,");
-          }
-          // Output identifier
-          Serial.print(_inputList[i].CommandIdentifier);
-          Serial.println();
+        else if(_outputList[i].Type == TYPE_DOUT)
+        {
+          Serial.print("DIGITAL_OUT,");     
         }
+        else if(_outputList[i].Type == TYPE_AOUT)
+        {
+          Serial.print("ANALOGUE_OUT,");     
+        }
+        else if(_outputList[i].Type == TYPE_MOTOR)
+        {
+          Serial.print("MOTOR,");     
+        }
+        // Output identifier
+        Serial.print(_outputList[i].CommandIdentifier);
+        Serial.print(",");
+        // Output Value
+        Serial.print(_outputList[i].Value);
+        Serial.println();
       }
     }
-  }  
+    // Loop through inputs and send the details
+    for(int i = 0; i < NUM_INPUTS; i++)
+    {
+      // If we are quering all or just this input
+      if (commandValue == "" || _inputList[i].CommandIdentifier == commandValue) {
+        // Output type
+        if(_inputList[i].Type == TYPE_BUTTON_INC)
+        {
+          Serial.print("INCREMENT,");          
+        }
+        else if(_inputList[i].Type == TYPE_BUTTON_DEC)
+        {
+          Serial.print("OUTPUT,");     
+        }
+        else if(_inputList[i].Type == TYPE_BUTTON)
+        {
+          Serial.print("STANDARD,");
+        }
+        // Output identifier
+        Serial.print(_inputList[i].CommandIdentifier);
+        Serial.println();
+      }
+    }
+  }
 }
 
 //Loop Event Handler
