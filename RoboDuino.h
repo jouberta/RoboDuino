@@ -60,6 +60,6 @@ class RoboDuino
     int _servoCounter;
     // Command processing method
     void _doCommand();
-    void _doInput(int i, unsigned int now);
+    void _doInput(int i, bool currentState);
 };
 #endif

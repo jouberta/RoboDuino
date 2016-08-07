@@ -204,26 +204,30 @@ void RoboDuino::doLoopEvent()
   // Read inputs
   for(int i = 0; i < NUM_INPUTS; i++)
   {
-    // If the input has been set for a pullup input
-    // TODO: Implement standard input too!
-    if (digitalRead(_inputList[i].PinNumber) == LOW) 
+    // Has the INPUT_DELAY past since last run, or if millis has looped round
+    if (now >= _lastRead[i] + INPUT_DELAY || now <= _lastRead[i] - INPUT_DELAY - 5)
     {
-      if (_inputList[i].Pullup == true)
+      bool currentState = false;
+      if (digitalRead(_inputList[i].PinNumber) == LOW) 
       {
-        _inputStates[i] = true;
-        _doInput(i, now);     
-      } else {
-        _inputStates[i] = false;        
+        if (_inputList[i].Pullup == true)
+        {
+          currentState = true;
+        } else {
+          currentState = false;
+        }
+      } else if (digitalRead(_inputList[i].PinNumber) == HIGH)
+      {
+        if (_inputList[i].Pullup == true)
+        {
+          currentState = false;
+        } else {
+          currentState = true;
+        }      
       }
-    } else if (digitalRead(_inputList[i].PinNumber) == HIGH)
-    {
-      if (_inputList[i].Pullup == true)
-      {
-        _inputStates[i] = false;
-      } else {
-        _inputStates[i] = true;
-        _doInput(i, now);
-      }      
+      _doInput(i, currentState);
+      // Set the lastRead value to now
+      _lastRead[i] = now;
     }
   }
   // Run outputs
@@ -292,13 +296,12 @@ void RoboDuino::doLoopEvent()
   }
 }
 
-void RoboDuino::_doInput(int i, unsigned int now)
+void RoboDuino::_doInput(int i, bool currentState)
 {
-  // Has the INPUT_DELAY past since last run, or if millis has looped round
-  if (now >= _lastRead[i] + INPUT_DELAY || now <= _lastRead[i] - INPUT_DELAY - 5)
+  // Increment input
+  if (_inputList[i].Type == TYPE_BUTTON_INC) 
   {
-    // Increment input
-    if (_inputList[i].Type == TYPE_BUTTON_INC) 
+    if (currentState == true)
     {
       // Simple bound check (for servos atm)
       if (_outputList[_inputList[i].OutputNumber].Value <= 180) {
@@ -306,9 +309,20 @@ void RoboDuino::_doInput(int i, unsigned int now)
         _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value + 1;
         _outputList[_inputList[i].OutputNumber].ValueChange = true;
       }
+      Serial.println(_inputList[i].CommandIdentifier + ",on");
+      _inputStates[i] = true;
+    } else {
+      if (_inputStates[i] == true) 
+      {
+        Serial.println(_inputList[i].CommandIdentifier + ",off");
+        _inputStates[i] = false;
+      }   
     }
-    // Decrement input
-    if (_inputList[i].Type == TYPE_BUTTON_DEC) 
+  }
+  // Decrement input
+  if (_inputList[i].Type == TYPE_BUTTON_DEC) 
+  {
+    if (currentState == true)
     {
       // Simple bound check (for servos atm)
       if (_outputList[_inputList[i].OutputNumber].Value >= 0) {
@@ -316,8 +330,32 @@ void RoboDuino::_doInput(int i, unsigned int now)
         _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value - 1;    
         _outputList[_inputList[i].OutputNumber].ValueChange = true;        
       }
+      Serial.println(_inputList[i].CommandIdentifier + ",on");
+      _inputStates[i] = true;
+    } else {
+      if (_inputStates[i] == true) 
+      {
+        Serial.println(_inputList[i].CommandIdentifier + ",off");
+        _inputStates[i] = false;
+      }   
     }
-    // Set the lastRead value to now
-    _lastRead[i] = now;
-  }   
+  }
+  // Standard Button
+  if (_inputList[i].Type == TYPE_BUTTON) 
+  {
+    if (currentState == true) 
+    {
+      if (_inputStates[i] == false) 
+      {
+        Serial.println(_inputList[i].CommandIdentifier + ",on");
+      }   
+      _inputStates[i] = true;
+    } else {
+      if (_inputStates[i] == true) 
+      {
+        Serial.println(_inputList[i].CommandIdentifier + ",off");
+      }   
+      _inputStates[i] = false;
+    }      
+  }
 }
