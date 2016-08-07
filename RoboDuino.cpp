@@ -133,7 +133,65 @@ void RoboDuino::_doCommand()
       }
     }
   }
-  
+  // If the command id is ? then do queries!
+  if (cmdID == "?")
+  {
+    if (commandValue) 
+    {
+      // Loop through outputs and send the details
+      for(int i = 0; i < NUM_OUTPUTS; i++)
+      {
+        // If we are quering all or just this output
+        if (commandValue == "" || _outputList[i].CommandIdentifier == commandValue) {
+          if(_outputList[i].Type == TYPE_SERVO)
+          {
+            Serial.print("SERVO,");          
+          }
+          else if(_outputList[i].Type == TYPE_DOUT)
+          {
+            Serial.print("DIGITAL_OUT,");     
+          }
+          else if(_outputList[i].Type == TYPE_AOUT)
+          {
+            Serial.print("ANALOGUE_OUT,");     
+          }
+          else if(_outputList[i].Type == TYPE_MOTOR)
+          {
+            Serial.print("MOTOR,");     
+          }
+          // Output identifier
+          Serial.print(_outputList[i].CommandIdentifier);
+          Serial.print(",");
+          // Output Value
+          Serial.print(_outputList[i].Value);
+          Serial.println();
+        }
+      }
+      // Loop through inputs and send the details
+      for(int i = 0; i < NUM_INPUTS; i++)
+      {
+        // If we are quering all or just this input
+        if (commandValue == "" || _inputList[i].CommandIdentifier == commandValue) {
+          // Output type
+          if(_inputList[i].Type == TYPE_BUTTON_INC)
+          {
+            Serial.print("INCREMENT,");          
+          }
+          else if(_inputList[i].Type == TYPE_BUTTON_DEC)
+          {
+            Serial.print("OUTPUT,");     
+          }
+          else if(_inputList[i].Type == TYPE_BUTTON)
+          {
+            Serial.print("STANDARD,");
+          }
+          // Output identifier
+          Serial.print(_inputList[i].CommandIdentifier);
+          Serial.println();
+        }
+      }
+    }
+  }  
 }
 
 //Loop Event Handler
@@ -185,15 +243,13 @@ void RoboDuino::doLoopEvent()
     //Servo output
     if (_outputList[i].Type == TYPE_SERVO)
     {
-      // Get the servo position in internal list
-      int servoNumber = _partListToTypeRelation[i];
-      // Get current value for servo
-      int currentValue = _servos[servoNumber].read();
-      // Check out SERVO_DELAY has passed or if millis has looped round
-      if (now >= _lastRun[i] + SERVO_DELAY || now <= _lastRead[i] - SERVO_DELAY - 5) 
+      if (now >= _lastRun[i] + SERVO_DELAY || now <= _lastRun[i] - SERVO_DELAY - 5) 
       {
-        // Set the last run to now
-        _lastRun[i] = now;
+        // Get the servo position in internal list
+        int servoNumber = _partListToTypeRelation[i];
+        // Get current value for servo
+        int currentValue = _servos[servoNumber].read();
+        // Check out SERVO_DELAY has passed or if millis has looped round
         if (currentValue < _outputList[i].Value) 
         {
           _servos[servoNumber].write(currentValue + 1);
@@ -201,7 +257,9 @@ void RoboDuino::doLoopEvent()
         else if (currentValue > _outputList[i].Value) 
         {
           _servos[servoNumber].write(currentValue - 1);
-        }          
+        }
+        // Set the last run to now
+        _lastRun[i] = now;
       }
     }
     // Motor output
@@ -209,15 +267,10 @@ void RoboDuino::doLoopEvent()
     {
       // Check changed flag
       if (_outputList[i].ValueChange == true)
-      {
-        // Reset changed flag
-        _outputList[i].ValueChange = false;
-        
+      {        
         // Check out MOTOR_DELAY has passed or if millis has looped round
         if (now >= _lastRun[i] + MOTOR_DELAY || now <= _lastRead[i] - MOTOR_DELAY - 5) 
         {
-          // Set the last run to now
-          _lastRun[i] = now;
           if (_outputList[i].Value < 0) 
           {
             // Set 'forward' speed
@@ -239,7 +292,11 @@ void RoboDuino::doLoopEvent()
           {
             // Stop the motor
             analogWrite(_outputList[i].PinNumber[PIN_MOTOR_PWM], LOW);          
-          }         
+          }
+          // Reset changed flag
+          _outputList[i].ValueChange = false;
+          // Set the last run to now
+          _lastRun[i] = now;
         }
       }
     }
