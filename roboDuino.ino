@@ -13,10 +13,10 @@ void setup() {
     {TYPE_MOTOR, "M", {2, 4, 3}, 0, false}
   };
   struct Input inputList[NUM_INPUTS] = {
-    {TYPE_BUTTON_INC,"S",A0, 1},
-    {TYPE_BUTTON_DEC,"W",A3, 1},
-    {TYPE_BUTTON_INC,"A",A2, 0},
-    {TYPE_BUTTON_DEC,"D",A1, 0}
+    {TYPE_BUTTON_INC,"S",A0, 1, true},
+    {TYPE_BUTTON_DEC,"W",A3, 1, true},
+    {TYPE_BUTTON_INC,"A",A2, 0, true},
+    {TYPE_BUTTON_DEC,"D",A1, 0, true}
   };
   // Initialise everything!
   robo.init(inputList, outputList);  

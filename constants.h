@@ -17,4 +17,4 @@
 #define TYPE_BUTTON 4
 #define TYPE_BUTTON_INC 5
 #define TYPE_BUTTON_DEC 6
-
+#define TYPE_TOGGLE 7

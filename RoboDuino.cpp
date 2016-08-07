@@ -60,13 +60,18 @@ void RoboDuino::init(Input inputList[NUM_INPUTS], Output outputList[NUM_OUTPUTS]
     //set the parts list
     _inputList[i] = inputList[i];
     if (_inputList[i].Type == TYPE_BUTTON || 
+        _inputList[i].Type == TYPE_TOGGLE || 
         _inputList[i].Type == TYPE_BUTTON_INC || 
         _inputList[i].Type == TYPE_BUTTON_DEC 
     ) 
     {
       // Set the pinmode for the inputs
-      // TODO: Add pull up and standard input pins
-      pinMode(_inputList[i].PinNumber, INPUT_PULLUP);
+      if (_inputList[i].Pullup == true) 
+      {
+        pinMode(_inputList[i].PinNumber, INPUT_PULLUP);        
+      } else {
+        pinMode(_inputList[i].PinNumber, INPUT);        
+      }
     } 
   }  
 }
@@ -199,39 +204,26 @@ void RoboDuino::doLoopEvent()
   // Read inputs
   for(int i = 0; i < NUM_INPUTS; i++)
   {
-    // Increment and Decrement inputs
-    if ( _inputList[i].Type == TYPE_BUTTON_INC || _inputList[i].Type == TYPE_BUTTON_DEC)
+    // If the input has been set for a pullup input
+    // TODO: Implement standard input too!
+    if (digitalRead(_inputList[i].PinNumber) == LOW) 
     {
-      // If the input has been set for a pullup input
-      // TODO: Implement standard input too!
-      if (digitalRead(_inputList[i].PinNumber) == LOW) {
-        // Has the INPUT_DELAY past since last run, or if millis has looped round
-        if (now >= _lastRead[i] + INPUT_DELAY || now <= _lastRead[i] - INPUT_DELAY - 5)
-        {
-          // Increment input
-          if (_inputList[i].Type == TYPE_BUTTON_INC) 
-          {
-            // Simple bound check (for servos atm)
-            if (_outputList[_inputList[i].OutputNumber].Value <= 180) {
-              // Change the objects value by increasing it one and set its changed value flag
-              _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value + 1;
-              _outputList[_inputList[i].OutputNumber].ValueChange = true;
-            }
-          }
-          // Decrement input
-          if (_inputList[i].Type == TYPE_BUTTON_DEC) 
-          {
-            // Simple bound check (for servos atm)
-            if (_outputList[_inputList[i].OutputNumber].Value >= 0) {
-              // Change the objects value by decreasing it one and set its changed value flag
-              _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value - 1;    
-              _outputList[_inputList[i].OutputNumber].ValueChange = true;        
-            }
-          }
-          // Set the lastRead value to now
-          _lastRead[i] = now;
-        }
+      if (_inputList[i].Pullup == true)
+      {
+        _inputStates[i] = true;
+        _doInput(i, now);     
+      } else {
+        _inputStates[i] = false;        
       }
+    } else if (digitalRead(_inputList[i].PinNumber) == HIGH)
+    {
+      if (_inputList[i].Pullup == true)
+      {
+        _inputStates[i] = false;
+      } else {
+        _inputStates[i] = true;
+        _doInput(i, now);
+      }      
     }
   }
   // Run outputs
@@ -298,4 +290,34 @@ void RoboDuino::doLoopEvent()
       }
     }
   }
+}
+
+void RoboDuino::_doInput(int i, unsigned int now)
+{
+  // Has the INPUT_DELAY past since last run, or if millis has looped round
+  if (now >= _lastRead[i] + INPUT_DELAY || now <= _lastRead[i] - INPUT_DELAY - 5)
+  {
+    // Increment input
+    if (_inputList[i].Type == TYPE_BUTTON_INC) 
+    {
+      // Simple bound check (for servos atm)
+      if (_outputList[_inputList[i].OutputNumber].Value <= 180) {
+        // Change the objects value by increasing it one and set its changed value flag
+        _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value + 1;
+        _outputList[_inputList[i].OutputNumber].ValueChange = true;
+      }
+    }
+    // Decrement input
+    if (_inputList[i].Type == TYPE_BUTTON_DEC) 
+    {
+      // Simple bound check (for servos atm)
+      if (_outputList[_inputList[i].OutputNumber].Value >= 0) {
+        // Change the objects value by decreasing it one and set its changed value flag
+        _outputList[_inputList[i].OutputNumber].Value = _outputList[_inputList[i].OutputNumber].Value - 1;    
+        _outputList[_inputList[i].OutputNumber].ValueChange = true;        
+      }
+    }
+    // Set the lastRead value to now
+    _lastRead[i] = now;
+  }   
 }

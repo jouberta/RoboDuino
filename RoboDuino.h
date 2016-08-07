@@ -26,6 +26,7 @@ struct Input
   String CommandIdentifier;
   int PinNumber;
   int OutputNumber;
+  bool Pullup;
 };
 
 class RoboDuino
@@ -50,6 +51,8 @@ class RoboDuino
     Input _inputList[NUM_INPUTS];
     // Array of last read timings
     unsigned int _lastRead[NUM_INPUTS];
+    // Array of input states
+    bool _inputStates[NUM_INPUTS];
     // Command string buffer
     String _inputCommand;
     // Part list relation
@@ -57,5 +60,6 @@ class RoboDuino
     int _servoCounter;
     // Command processing method
     void _doCommand();
+    void _doInput(int i, unsigned int now);
 };
 #endif
